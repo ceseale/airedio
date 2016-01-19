@@ -1,5 +1,8 @@
 # airedio
-[demo](https://airedio.herokuapp.com)
+
+[Watch Demo on YouTube to Checkout Video Calling Feature!](https://www.youtube.com/watch?v=LDOyHnzmb5A)
+
+[Live Demo! (Video Calling Disabled)](https://airedio.herokuapp.com)
 
 Mapping application for analyzing geo-centric data; awarded runner up in Kandy.io Hackathon. Built with AngularJS, Node/Express, and Firebase. Airedio creates a set of bayesian analysis tools to analyze geospatial data using MCMC through an adaptive Gibbs sampler.
 ![Alt Text](https://github.com/ceseale/airedio/raw/master/gallery (1).jpg)
