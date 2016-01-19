@@ -4,7 +4,7 @@ var _ = require('lodash');
 var Twit = require('twit');
 var sentiment = require('sentiment');
 var firebase = require('firebase'); 
-
+// Fake Keys Replace With Your Own!!!!
 var twitter = new Twit({
     consumer_key: 'rbQ7q6ZvSLCwp51U2ZWnDhsm7',
     consumer_secret: '7XXa3JHpq6zYUfy4Hrj62V21pmpg8c0VsWr8W9sq8ELgQnwU56',
