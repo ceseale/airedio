@@ -1,0 +1,390 @@
+<div id="map"></div>
+<input id="pac-input" type="text" placeholder="Search Box">
+</div>
+<div  id="tabs" style= "width : 0px;">
+<tabset class="tabs-left" close="">
+<tab heading="My Data">
+<div class="tab-div">
+    <div class="info_container" id ="a">
+        <a ng-click="modals.myDataCall()"class="help">?</a>
+        <h3>Data Sources</h3>
+        <p>Here you can access your data sources and we've provided demo data sets.</p>
+        <div ng-click="changeData($index)" ng-repeat="dat in datum" class="info_container data-container">
+            <header >
+                {{dat.text}}
+            </header>
+            <footer>
+                <h4>Type: {{dat.type || 'REAL-TIME'}}</h4>
+                <button name="button"  ng-click="closeAlert($index)" class="btn btn-danger" >Remove Stream</button>
+            </footer>
+        </div>
+    </div>
+</div>
+</tab>
+<tab heading="Add Data">
+<div class="tab-div">
+    <div class="info_container" id="b">
+        <a ng-click="modals.addDataCall()"class="help">?</a>
+        <h3>Add Data to Map</h3>
+        <p>Here you can get can send data from your arduino, rasberry pi, your browser, or any device that can send http requests.
+        </p>
+        <p>Click to get api id to send real time data!</p>
+        <div class="info_container newstream-container">
+            <header>
+                Add New Data
+            </header>
+            <div >
+                <input type="text" ng-model="dataname"  placeholder="Enter A Name" class="form-control">
+            </div>
+            <button type="button"  class="btn btn-primary"  ng-click= "getCode(dataname)" >Get ID!</button>
+            <h4 class="info_container-messages">{{firecode}}</h4>
+        </div>
+        <!-- <div>
+                        <h4>How to Use ID:</h4>
+                        <p>Send a GET request to <strong>'aired.io/api/things/{{firecode}}/lat/lng/data'</strong> With some random data a call to the API might look this: 'aired.io/api/things/{{firecode}}/25.7933/80.2906/75F'</p>
+                        <p></p>
+        </div> -->
+        <div style="padding:30px;">
+            <button type="button"  ng-click="modals.addDataCall()"  class="btn btn-primary"> How to talk to aired.io </button>
+        </div>
+    </div>
+</div>
+</tab>
+<tab heading="Style Map">
+<div class="tab-div">
+    <div class="info_container" id="c">
+        <a ng-click="modals.styleDataCall()"class="help">?</a>
+        <h3>Change Map Color Theme</h3>
+        <p>Hover to see map preview and description.</p>
+        <div class="btn-group-vertical" role="group" aria-label="Vertical button group"     style=" width: 175px;">
+            <button type="button"  class="btn btn-primary" id= "subtle_grayscale"ng-click= "subtle_grayscale()">Grayscale</button>
+            <button type="button"  class="btn btn-primary" ng-click= "avacado()" id= "avacado" >Green Lands</button>
+            <button type="button"  class="btn btn-primary" ng-click="blue_water()" id= "blue_water" >Blue Waters</button>
+            <button type="button"  class="btn btn-primary" ng-click="shades_of_grey()" id= "shades_of_grey" >Gray Shades</button>
+            <button type="button"  class="btn btn-primary" ng-click="pale_dawn()" id= "pale_dawn" >Pale Dawn</button>
+            <button type="button"  class="btn btn-primary" ng-click="apple_aaps_esque()" id= "apple_aaps_esque" >Roads Map</button>
+            <button type="button"  class="btn btn-primary" ng-click="blue_essence()" id= "blue_essence" >Bright Blues</button>
+            <button type="button"  class="btn btn-primary" ng-click="retro()" id= "retro" >Retro Map</button>
+            <button type="button"  class="btn btn-primary" ng-click="paper()"  id= "paper" >Paper</button>
+            <button type="button"  class="btn btn-primary" ng-click="unimposed()" id= "unimposed" >Unimposed</button>
+        </div>
+        <div>
+            <h2>Change Data Colors</h2>
+            <label>Largest Values
+                <div class="form-group">
+                    <input
+                    minicolors="opacitysettings"
+                    id="opacity"
+                    class="form-control"
+                    type="text"
+                ng-model="map.colorScheme[0]"> </div>
+            </label>
+        </div>
+        <div>
+            <label>Smallest Values
+                <div class="form-group">
+                    <input
+                    minicolors="opacitysettings"
+                    id="opacity"
+                    class="form-control"
+                    type="text"
+                ng-model="map.colorScheme[1]">   </div>
+            </label>
+        </div>
+        </div>
+    </div>
+    </tab>
+    <tab active="dataTab" heading="Data Analysis">
+    <div class="tab-div">
+        <div class="info_container" id="e">
+            <a ng-click="modals.dataAnalysisCall()"class="help">?</a>
+            <button type="button" class="btn btn-primary" ng-model="singleModel" ng-click="addRect(1)" btn-checkbox btn-checkbox-true="1" btn-checkbox-false="0"
+            style="
+            width: 140px;
+            height: 50px;
+            white-space: normal;
+            margin-top: 5px;
+            ">
+            {{rectOffMess1}}
+            </button>
+            <button type="button" class="btn btn-primary" ng-model="singleModel" ng-click="addRect(2)" btn-checkbox btn-checkbox-true="1" btn-checkbox-false="0"
+            style="
+            width: 140px;
+            height: 50px;
+            white-space: normal;
+            margin-top: 5px;
+            ">
+            {{rectOffMess2}}
+            </button>
+            <p class ="dataStats" style="
+            width: 140px;">{{box1}}</p>
+            <p class ="dataStats" style="
+            width: 140px;
+            left: 145px;
+            top: 50px;
+            position: absolute;">{{box2}}</p>
+            <p>{{p_val}}</p>
+            <button type="button"  ng-show ="p_val!= undefined && bayesbutt" class="btn btn-primary" ng-model="singleModel" ng-click="runbayes(); select();"  btn-checkbox btn-checkbox-true="1" btn-checkbox-false="0">
+            Run Baysiain Analysis
+            </button>
+            <div ng-show = "!bayesbutt">
+                <div class="aired-container">
+                    <div class="ball"></div>
+                    <div class="ball"></div>
+                    <div class="ball"></div>
+                    <div class="ball"></div>
+                    <div class="ball"></div>
+                    <div class="ball"></div>
+                    <div class="ball"></div>
+                </div>
+                <progressbar  animate="false" value="percentDone"><span style="color:black; white-space:nowrap;">{{percentDone}}%</span>
+                </progressbar>
+            </div>
+            <div ng-show="showCharts == true" id="diff_plots_div">
+                <div id="group_diff_plot_wrapper_div" class="sg-8">
+                    <div class="item_title">Trace Plot - Difference of Means</div>
+                    <div id="group_diff_plot" style="height: 200px; bottom:0px ; "></div>
+                </div>
+                <div id="group_diff_hist_wrapper_div" class="sg-11">
+                    <div class="item_title">Distribution - Difference of Means</div>
+                    <div id="group_diff_hist" style="height: 200px; bottom: 0px ;"></div>
+                    <div class="item_description">If the 95% Highest Density Interval does not include zero there is a credible difference!</div>
+                </div>
+            </div>
+            <div ng-show="rectOffMess1!='Remove' && rectOffMess2!='Remove'"><h3>Click one of the buttons above to add a interactive Data Box to the map and start looking at some statisics related to data inside the box!</h3></div>
+            <div ng-show="rectOffMess1!='Remove' && rectOffMess2=='Remove' || rectOffMess1=='Remove' && rectOffMess2!='Remove'"><h3>Feel free to move around and resize the data box to learn more about the data. Add another box for statisical comparisons.</h3></div>
+            <div ng-show="rectOffMess1=='Remove' && rectOffMess2=='Remove' && p_val== undefined"><h3>For statisical conparison tools to be active make sure there is data in boxes with n > 1 </h3></div>
+            <div ng-show="rectOffMess1=='Remove' && rectOffMess2=='Remove' && p_val!= undefined && !showCharts"><h3>For large sample sizes about t-test should be usefull for smaller sample sizes click the above button for further analysis</h3></div>
+        </div>
+    </div>
+    </tab>
+    <tab heading="Collaborate">
+    <div class="tab-div">
+        <div class="info_container" id="f">
+            <a ng-click="modals.collaborateCall()"class="help">?</a>
+            <div  id="logged-in" class="info_container collab-container">
+                <div id="call-container">
+                    <div id="initialize-call" ng-show="showCall && !showCallAE">
+                        <h3>
+                        Make a Call
+                        </h3>
+                        <div class="form-group">
+                            <label for="username-call">Enter Username</label>
+                            <input type="text" name="username-call" placeholder="Enter a User" id="username-call" ng-model="kandyapi.calluser" class="form-control" />
+                        </div>
+                        <button name="button" ng-click="makecall()"class="btn btn-success" >Call</button>
+                    </div>
+                    <div ng-show="showCallAE" id="call-status">
+                        <h3></h3>
+                        <p class="pull-left"></p>
+                        <button name="button"  ng-click ="answerCall()" class="btn btn-success pull-left" id="answer-call">Answer</button>
+                        <button name="button"  ng-click ="rejectCall()" class="btn btn-danger pull-right" id="end-call">Recject</button>
+                    </div>
+                    <div ng-show="!showCallAE && !showCall" id="call-status">
+                        <button name="button"  ng-click ="endCall()" class="btn btn-danger" id="end-call">End Call</button>
+                    </div>
+                </div>
+            </div>
+            <div  class="info_container collab-container">
+                <h3>
+                Link Map
+                </h3>
+                <button ng-class="{'active' : showair}" ng-click="showair = true" class="control-form btn collab-btn">Air This Map</button>
+                <button ng-class="{'active' : !showair}" ng-click="showair = false" class="control-form btn collab-btn">Connect to Map</button>
+                <div ng-show="showair" ng-model="selectedi" class="info_container data-container" style="  width: 199px;">
+                    <header >
+                        {{selectedi.text}}
+                    </header>
+                    <p>Enter the email of the person that you would like to mirror your map to</p>
+                    <div class='info_container-toolbar'>
+                        <label for="nameInput">Email:</label>
+                        <input ng-model= "colabData.airedEmail" type='text' id='nameInput'>
+                    </div>
+                    <!-- <ul id='example-messages' class="info_container-messages"></ul> -->
+                    <footer ng-click = "shareDes()">
+                        <h4>Click to Share</h4>
+                    </footer>
+                </div>
+                <div ng-show="!showair" ng-model="selectedi" class="info_container data-container" style="  width: 199px;">
+                    <header >
+                        {{selectedi.text}}
+                    </header>
+                    <p>Here you can connect to a source sharing with you and mirror their screen. Just enter your email or sign in.</p>
+                    <div class='info_container-toolbar'>
+                        <label for="nameInput">Email:</label>
+                        <input ng-model= "colabData.matchEmail" type='text' id='nameInput'>
+                    </div>
+                    <footer ng-click="findAir()" >
+                        <h4>Connect to a Shared Map</h4>
+                    </footer>
+                </div>
+            </div>
+        </div>
+    </div>
+    </tab>
+    <tab heading="My Account">
+    <div class="tab-div">
+        <div class="info_container" id="g">
+            <a ng-click="modals.accountCall()"class="help">?</a>
+            <div class="jumbotron" ng-show="!loggedin">
+                <h2>Login</h2>
+                <div class="alert alert-danger" data-ng-repeat="error in errors">
+                    {{ error }}
+                </div>
+                <div class="form-group">
+                    <label>Email address</label>
+                    <input type="email"
+                    class="form-control"
+                    placeholder="Enter email"
+                    ng-model="user.email">
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password"
+                    class="form-control"
+                    placeholder="Password"
+                    ng-model="user.password">
+                </div>
+                <button type="text" class="btn btn-primary" data-ng-click="login()">Login</button>
+                <h2>Register</h2>
+                <div class="alert alert-danger" data-ng-repeat="error in errors">
+                    {{ error }}
+                </div>
+                <div class="form-group">
+                    <label>Email address</label>
+                    <input type="email"
+                    class="form-control"
+                    placeholder="Enter email"
+                    ng-model="registerUser.email">
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password"
+                    class="form-control"
+                    placeholder="Password"
+                    ng-model="registerUser.password">
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password"
+                    class="form-control"
+                    placeholder="Password"
+                    ng-model="registerUser.confirmPassword">
+                </div>
+                <button type="text"
+                class="btn btn-success"
+                data-ng-click="createUser()">Sign up</button>
+            </div>
+            <div ng-show="loggedin">
+                <p>
+                <button class="btn btn-default btn-sm" ng-click="logout()">Logout</button>
+                </p>
+                <h3>Data Links</h3>
+                <div ng-repeat="dat in datum track by $index" class="info_container data-container">
+                    <header >
+                        {{dat.text}}
+                    </header>
+                    <p>airedio.herokuapp.com/api/things/{{dat.code}}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    </tab>
+    </tabset>
+</div>
+<div  id="welcome" ng-show="modals.welcome" class="my-modal info_container main-page" >
+    <a ng-click="modals.welcomeCall()" class="close">×</a>
+    <h1>
+    Welcome to Aired.io
+    </h1>
+    <h3><code>Aired.io</code> allows you to create open data maps from Arduino, Rasberry Pi, your own apps, or any device that can send http requests. We have added some example data sets for you to left. Use the dashboard to navigate and click the <a class="help-ex">?</a> in the right corner to learn about the current page.</h3>
+    <!-- ICONS CLOUDS-->
+    <div style="position:fixed;" class="container-cloud">
+        <!-- First cloud -->
+        <svg version="1.1" class="svg-cloud01" viewBox="0 0 100 100" preserveAspectRatio="xMinYMin meet">
+        <g>
+        <path d="M642.02-364.11c-0.772,0-1.519,0.114-2.229,0.313c-0.17-6.744-5.679-12.162-12.464-12.162   c-4.368,0-8.201,2.251-10.428,5.65c-1.38-2.61-4.117-4.393-7.275-4.393c-2.621,0-4.95,1.229-6.456,3.139   c-2.865-6.496-9.357-11.031-16.913-11.031c-8.99,0-16.479,6.42-18.138,14.926c-0.937-0.248-1.911-0.393-2.925-0.393   c-6.312,0-11.427,5.116-11.427,11.427c0,0.907,0.117,1.787,0.317,2.634h95.921c0.146-0.609,0.229-1.243,0.229-1.896   C650.233-360.433,646.556-364.11,642.02-364.11z"/>
+        </g>
+        <g>
+        <path d="M90.02,48.188c-0.771,0-1.518,0.113-2.229,0.312c-0.17-6.744-5.678-12.162-12.463-12.162   c-4.369,0-8.201,2.251-10.428,5.65c-1.381-2.61-4.117-4.393-7.275-4.393c-2.621,0-4.951,1.229-6.457,3.139   c-2.865-6.496-9.357-11.031-16.913-11.031c-8.99,0-16.479,6.42-18.138,14.926c-0.937-0.248-1.911-0.393-2.925-0.393   c-6.312,0-11.427,5.116-11.427,11.427c0,0.907,0.117,1.786,0.317,2.634h95.92c0.146-0.609,0.23-1.243,0.23-1.896   C98.234,51.863,94.557,48.188,90.02,48.188z"/>
+        </g>
+        </svg>
+        <!-- Second cloud -->
+        <svg version="1.1" class="svg-cloud02" viewBox="0 0 100 100" preserveAspectRatio="xMinYMin meet">
+        <g>
+        <path d="M642.02-364.11c-0.772,0-1.519,0.114-2.229,0.313c-0.17-6.744-5.679-12.162-12.464-12.162   c-4.368,0-8.201,2.251-10.428,5.65c-1.38-2.61-4.117-4.393-7.275-4.393c-2.621,0-4.95,1.229-6.456,3.139   c-2.865-6.496-9.357-11.031-16.913-11.031c-8.99,0-16.479,6.42-18.138,14.926c-0.937-0.248-1.911-0.393-2.925-0.393   c-6.312,0-11.427,5.116-11.427,11.427c0,0.907,0.117,1.787,0.317,2.634h95.921c0.146-0.609,0.229-1.243,0.229-1.896   C650.233-360.433,646.556-364.11,642.02-364.11z"/>
+        </g>
+        <g>
+        <path d="M90.02,48.188c-0.771,0-1.518,0.113-2.229,0.312c-0.17-6.744-5.678-12.162-12.463-12.162   c-4.369,0-8.201,2.251-10.428,5.65c-1.381-2.61-4.117-4.393-7.275-4.393c-2.621,0-4.951,1.229-6.457,3.139   c-2.865-6.496-9.357-11.031-16.913-11.031c-8.99,0-16.479,6.42-18.138,14.926c-0.937-0.248-1.911-0.393-2.925-0.393   c-6.312,0-11.427,5.116-11.427,11.427c0,0.907,0.117,1.786,0.317,2.634h95.92c0.146-0.609,0.23-1.243,0.23-1.896   C98.234,51.863,94.557,48.188,90.02,48.188z"/>
+        </g>
+        </svg>
+    </div>
+</div>
+<div  id="welcome" ng-show="modals.myData" class="my-modal info_container main-page" >
+    <a ng-click="modals.myDataCall()" class="close">×</a>
+    <h1>
+    My Data Tab
+    </h1>
+    <h3>Here you can select a currently streaming data source. Upon clicking that geo data will appear on the map. These data sources can be shared with freind, colleagues for the world. You can also remove the stream  with deletes the data from our database forever. </h3>
+</div>
+<div  id="welcome" ng-show="modals.addData" class="my-modal info_container main-page" >
+    <a ng-click="modals.addDataCall()" class="close">×</a>
+    <h1>
+    Adding Data
+    </h1>
+    <h3>To create a new data stream you have to click to get a new personal data id. Once you have the ID you can use it to receive data from Arduinos, Rasberry Pi, other micro controlers or even your browser by sending GET requests to your data url. Below we have some examples in popular programming languages:</h3>
+    <h4><code>Arduino</code></h4>
+    <div hljs>
+        char server[] = "airedio.herokuapp.com";
+        if (client.connect(server, 80)) {
+        Serial.println("connected");
+        // Make a HTTP request
+        client.println("GET /api/things/YOUR-ID/lat/lng/data HTTP/1.1"); // Your personal data code should go here
+        client.println("Host: airedio.herokuapp.com");
+        client.println("Connection: close");
+        client.println();
+        }
+    </div>
+    <h4><code>Javascript</code></h4>
+    <div hljs>
+        var yourURL = 'airedio.herokuapp.com/api/things/YOUR-ID/latitude/longitude/value/name{OPTIONAL}'
+        function httpGet(yourURL){
+        var xmlHttp = new XMLHttpRequest();
+        xmlHttp.open( "GET", yourURL, false );
+        xmlHttp.send( null );
+        return xmlHttp.responseText;
+        }
+    </div>
+</div>
+<div  id="welcome" ng-show="modals.styleData" class="my-modal info_container main-page" >
+    <a ng-click="modals.styleDataCall()" class="close">×</a>
+    <h1>
+    Styling data
+    </h1>
+    <h3>Add some creativity to your map. You can change the colors of the data points and the design of the map. You can also collaborate with friends or colleagues to create maps together.</h3>
+</div>
+<div  id="welcome" ng-show="modals.dataAnalysis" class="my-modal info_container main-page" >
+    <a ng-click="modals.dataAnalysisCall()" class="close">×</a>
+    <h1>
+    Data analysis
+    </h1>
+    <h3> This tool allows you to run some pretty sophisticated analysis on whatever geocentric data you have. When you add a data box to the map it will instantly start calculating the mean and standard deviation of the data inside the box. Once you put too eight of boxes on my you can run statistical comparison to see if there's a significant difference in one region versus another. We provide two to accomplish this your basic statistical t-test and babies into Monte Carlo Markov chain sampling which is really useful when comparing areas with smaller data points. It's also very cool. </h3>
+</div>
+<div  id="welcome" ng-show="modals.collaborate" class="my-modal info_container main-page" >
+    <a ng-click="modals.collaborateCall()" class="close">×</a>
+    <h1>
+    Collaborate
+    </h1>
+    <h3> You can make video calls through Kandy just enter the email address of the person you want to call. This feature is limited to Kandy users only.</h3>
+    <h3> you can also share this map with with someone in an interactive way allowing you to do data analysis and data styling together. Both screens will mimic each other. Just enter the email of the person you want to allow to see your map and mimic its behavior.</h3>
+</div>
+<div  id="welcome" ng-show="modals.account" class="my-modal info_container main-page" >
+    <a ng-click="modals.accountCall()" class="close">×</a>
+    <h1>
+    My Acoount
+    </h1>
+    <h3> If you signed up for an account you will be able to upload your own data sets and have them be saved to your account information. You also need to have an account to collaborate with other users and share your maps</h3>
+</div>
+<div  ng-show="!showCallAE && !showCall" id="video-container">
+<video  ng-src="{{trustSrc(src)}}" autoplay> </video>
+</div>
